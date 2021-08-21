@@ -39,11 +39,11 @@ async def _coinflip(ctx):
 
 @client.command(name="dev")
 async def _dev(ctx):
-  version = 1.0
-  dev_status = "More commands and more fluid interfaces coming soon! torn nee gu kee giat"
-  contributors = ["bbomya"]
-  git_hub = "GitHub repo coming soon! diaw gu tum"
-  await  ctx.send("\n".join([f"version: {version}","status: "+dev_status,"github: "+git_hub,"contributors: "+''.join(contributors)]))
+  f = open('./texts/dev_status.txt','r',encoding='utf-8')
+  dev_status = ''.join(f.readlines())
+  embed = discord.Embed(title="Dev Status",description=dev_status,color=0xB7829A)
+  f.close()
+  await ctx.send(embed=embed)
   
 
 @client.command(name="pick")
