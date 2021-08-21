@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 import os
 import random
-from keep_alive import keep_alive
 from datetime import datetime 
 import logging
 
@@ -39,12 +38,11 @@ async def _coinflip(ctx):
 
 @client.command(name="dev")
 async def _dev(ctx):
-  version = 1.0
-  dev_status = "More commands and more fluid interfaces coming soon! torn nee gu kee giat"
-  contributors = ["bbomya"]
-  git_hub = "GitHub repo coming soon! diaw gu tum"
-  await  ctx.send("\n".join([f"version: {version}","status: "+dev_status,"github: "+git_hub,"contributors: "+''.join(contributors)]))
-  
+  f = open('./texts/dev_status.txt','r',encoding='utf-8')
+  dev_status = ''.join(f.readlines())
+  embed = discord.Embed(title="Dev Status",description=dev_status,color=0xB7829A)
+  f.close()
+  await ctx.send(embed=embed)
 
 @client.command(name="pick")
 async def _choose(ctx, n=1):
@@ -115,6 +113,5 @@ async def _rolldice(ctx, roll=1, faces=6):
     result.append(str(random.randint(1,faces)))
   await ctx.send('Roll Dice: '+' '.join(result))
 
-      
-keep_alive()
-client.run(os.environ['BOT_TOKEN'])
+# BOT_TOKEN = "TOKEN" insert your bot token here     
+client.run(BOT_TOKEN)
