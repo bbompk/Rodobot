@@ -7,7 +7,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
-prefix = '-rodo '
+prefix = '-rodo0 '
 client = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None)
 
 @client.event
@@ -19,7 +19,7 @@ async def on_ready():
 async def _help(ctx) :
   f = open('./texts/help_commands.txt','r',encoding='utf-8')
   commands = ''.join(f.readlines())
-  embed = discord.Embed(title="Curent Commands (Prefix: -rodo)",description=commands,color=0xDA4C4C)
+  embed = discord.Embed(title="Curent Commands (Prefix: -rodo0)",description=commands,color=0xDA4C4C)
   f.close()
   await ctx.send(embed=embed)
 
@@ -113,5 +113,5 @@ async def _rolldice(ctx, roll=1, faces=6):
     result.append(str(random.randint(1,faces)))
   await ctx.send('Roll Dice: '+' '.join(result))
 
-# BOT_TOKEN = "TOKEN" insert your bot token here     
+# BOT_TOKEN = bottoken     
 client.run(BOT_TOKEN)
