@@ -1,0 +1,8 @@
+dev (check development status)
+ping (check latency)
+hello (say hello)
+coinflip (โยนเหรียญ)
+rolldice n(optional default=1) f(optional default=6) (ทอยลูกเต๋า ใส่จำนวนครั้งทอย,จำนวนหน้าลูกเต๋าได้)
+pick n(optional, default=1)  (จะให้ List ของมาแล้วจะเลือกออกมา n อย่าง)
+partymaker n(จะให้ List ของมาแล้วแบ่ง n กลุ่ม)
+snakeladder  (บันไดงูในไลน์ ของต้องเท่ากัน)
