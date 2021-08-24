@@ -8,17 +8,17 @@ from dotenv import load_dotenv
 import json
 import time
 import pytz
-from datetime import datetime 
+from datetime import datetime
+from keep_alive import keep_alive
 import logging
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
-prefix = "-rodo0 "
+prefix = "-rodo "
 client = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None)
 slash = SlashCommand(client, sync_commands=True) # Declares slash commands through the client.
 
-BOT_TOKEN = os.getenv('BOT_TOKEN')
 guild_ids = json.load(open('guild_ids.json'))['guild_ids']
 
 @client.event
@@ -30,7 +30,7 @@ async def on_ready():
 async def _help(ctx) :
   f = open('./texts/help_commands.txt','r',encoding='utf-8')
   commands = ''.join(f.readlines())
-  embed = discord.Embed(title="Curent Commands (Prefix: -rodo0)",description=commands,color=0xDA4C4C)
+  embed = discord.Embed(title="Curent Commands (Prefix: -rodo)",description=commands,color=0xDA4C4C)
   f.close()
   await ctx.send(embed=embed)
 
@@ -54,6 +54,7 @@ async def _dev(ctx):
   embed.add_field(name="Github Repo",value="https://github.com/bbompk/Rodobot.git",inline=False)
   embed.add_field(name="Contributors",value="bbomya, Prasrodo")
   await ctx.send(embed=embed)
+
 
 @client.command(name="pick")
 async def _choose(ctx, n=1):
@@ -167,5 +168,8 @@ async def test(ctx, question_or_title: str,choice_1="",choice_2="",choice_3="",c
   for i in range(len(choices)) :
     await message.add_reaction(emotes[i])
 
-  
-client.run(BOT_TOKEN)
+ 
+      
+keep_alive()
+client.run(os.environ['BOT_TOKEN'])
+
