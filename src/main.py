@@ -1,14 +1,25 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
+from discord_slash import SlashCommand
+from discord_slash.utils.manage_commands import create_option
 import os
 import random
+from dotenv import load_dotenv
+import json
+import time
+import pytz
 from datetime import datetime 
 import logging
 
+load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
-prefix = '-rodo0 '
+prefix = "-rodo0 "
 client = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None)
+slash = SlashCommand(client, sync_commands=True) # Declares slash commands through the client.
+
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+guild_ids = json.load(open('guild_ids.json'))['guild_ids']
 
 @client.event
 async def on_ready():
@@ -38,10 +49,10 @@ async def _coinflip(ctx):
 
 @client.command(name="dev")
 async def _dev(ctx):
-  f = open('./texts/dev_status.txt','r',encoding='utf-8')
-  dev_status = ''.join(f.readlines())
-  embed = discord.Embed(title="Dev Status",description=dev_status,color=0xB7829A)
-  f.close()
+  version = os.getenv('VERSION')
+  embed = discord.Embed(title="Rodobot Github Repo",description="Version: "+version,url="https://github.com/bbompk/Rodobot.git",color=0xB7829A)
+  embed.add_field(name="Github Repo",value="https://github.com/bbompk/Rodobot.git",inline=False)
+  embed.add_field(name="Contributors",value="bbomya, Prasrodo")
   await ctx.send(embed=embed)
 
 @client.command(name="pick")
@@ -113,5 +124,48 @@ async def _rolldice(ctx, roll=1, faces=6):
     result.append(str(random.randint(1,faces)))
   await ctx.send('Roll Dice: '+' '.join(result))
 
-# BOT_TOKEN = bottoken     
+@slash.slash(name="coinflip", guild_ids=guild_ids, description="flip a coin")
+async def _ping(ctx): 
+    c = "Head" if random.randint(0,1) else "Tail"
+    await ctx.send(f"Coinflip: {c}")
+
+@slash.slash(name="rodopoll",
+             description="This is just a test command, nothing more.",
+             guild_ids=guild_ids,
+             options=[
+               create_option(
+                 name="question_or_title",
+                 description="Title or Question for the poll",
+                 option_type=3,
+                 required = True
+               ),create_option(name="choice_1",description="create a choice",option_type=3,required=False),
+               create_option(name="choice_2",description="create a choice",option_type=3,required=False),
+               create_option(name="choice_3",description="create a choice",option_type=3,required=False),
+               create_option(name="choice_4",description="create a choice",option_type=3,required=False),
+               create_option(name="choice_5",description="create a choice",option_type=3,required=False),
+               create_option(name="choice_6",description="create a choice",option_type=3,required=False),
+               create_option(name="choice_7",description="create a choice",option_type=3,required=False),
+               create_option(name="choice_8",description="create a choice",option_type=3,required=False),
+               create_option(name="choice_9",description="create a choice",option_type=3,required=False),
+               create_option(name="choice_10",description="create a choice",option_type=3,required=False),
+             ])
+async def test(ctx, question_or_title: str,choice_1="",choice_2="",choice_3="",choice_4="",choice_5="",choice_6="",choice_7="",choice_8="",choice_9="",choice_10=""):
+  in_choices = (choice_1,choice_2,choice_3,choice_4,choice_5,choice_6,choice_7,choice_8,choice_9,choice_10)
+  choices = []
+  emotes = ('🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🇯')
+  for c in in_choices:
+      if c != "" :
+        choices.append(c)
+  result = []
+  for i in range(len(choices)) :
+    result.append(emotes[i]+' : '+choices[i]+'\n')
+  embed = discord.Embed(color=0xB7829A)
+  if len(choices) > 0 : embed.add_field(name=question_or_title,value=''.join(result)) 
+  else : embed.add_field(name=question_or_title+'\n',value='-forgot to add choices dumbass-')
+  embed.timestamp = datetime.now(pytz.utc)
+  message = await ctx.send(embed=embed)
+  for i in range(len(choices)) :
+    await message.add_reaction(emotes[i])
+
+  
 client.run(BOT_TOKEN)
