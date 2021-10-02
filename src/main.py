@@ -36,7 +36,7 @@ async def _help(ctx) :
 
 @client.command(name="ping")
 async def _ping(ctx):
-  await ctx.send(f"Ping: {client.latency}")
+  await ctx.send(f"Ping: {client.latency} <:8229_KannaPog:860150615317282888>")
 
 @client.command(name="hello")
 async def _hello(ctx):
