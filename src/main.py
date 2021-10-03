@@ -16,7 +16,14 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
 prefix = "-rodo "
-client = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None)
+def command_prefix(bot, message):
+  global prefix
+  if message.guild is None:
+    return ''
+  else:
+    return prefix
+
+client = commands.Bot(command_prefix=command_prefix, case_insensitive=True, help_command=None)
 slash = SlashCommand(client, sync_commands=True) # Declares slash commands through the client.
 
 guild_ids = json.load(open('guild_ids.json'))['guild_ids']
@@ -124,6 +131,32 @@ async def _rolldice(ctx, roll=1, faces=6):
   for i in range(roll):
     result.append(str(random.randint(1,faces)))
   await ctx.send('Roll Dice: '+' '.join(result))
+
+@client.command(name="send")
+async def send_ano(ctx, channel='', *, message='') :
+  rodo = client.get_guild(guild_ids[0])
+  rodo_chan = rodo.text_channels
+
+  if channel == '' :
+    await ctx.send("give me channel name, you dumb fuck")
+  elif message.strip()=='' :
+    chan = channel;
+    found  = False
+    for ch in rodo_chan :
+      if ch.name ==  chan :
+        await ctx.send("what should I send? you idiot")
+        found = True
+    if not found :
+      await ctx.send("There's no such channel in Rodo!")
+  else :
+    chan = channel;
+    found  = False
+    for ch in rodo_chan :
+      if ch.name ==  chan :
+        await ch.send(message)
+        found = True
+    if not found :
+      await ctx.send("There's no such channel in Rodo!")
 
 @slash.slash(name="coinflip", guild_ids=guild_ids, description="flip a coin")
 async def _ping(ctx): 
